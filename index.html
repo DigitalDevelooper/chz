@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<title></title>
+</head>
+<body>
+	<form id="form">
+	  Team name:<br>
+	  <input type="text" name="Teamname"><br>
+	  Password:<br>
+	  <input type="password" name="Password"><br><br>
+	  <ol>
+	  	<li>Ime:<input type="text" name="name"> Prezime:<input type="text" name="surname"> E-mail:<input type="email" name="mail"></li>
+	  	<li>Ime:<input type="text" name="name"> Prezime:<input type="text" name="surname"> E-mail:<input type="email" name="mail"></li>
+	  	<li>Ime:<input type="text" name="name"> Prezime:<input type="text" name="surname"> E-mail:<input type="email" name="mail"></li>
+	  	<li>Ime:<input type="text" name="name"> Prezime:<input type="text" name="surname"> E-mail:<input type="email" name="mail"></li>
+	  </ol>
+	 <input id="input" type="submit" value="Submit" onclick="submitform()">
+	</form>
+
+	<script type="text/javascript">
+		function submitform() {
+			
+		
+		$.fn.formToJSON = function() {
+				var objectGraph = {};
+				function add(objectGraph, name, value) {
+					if(name.length == 1) {
+						objectGraph[name[0]] = value;
+					}
+					else {
+						if(objectGraph[name[0]] == null) {
+							objectGraph[name[0]] = {};
+						}
+						add(objectGraph[name[0]], name.slice(1), value);
+					}
+				};
+				$(this).children('input, textarea').each(function() {
+					if($(this).attr('name') != 'submit') {
+						add(objectGraph, $(this).attr('name').split('.'), $(this).val());
+					}
+				});
+				return JSON.stringify(objectGraph);
+			};
+			$.ajaxSetup({
+				contentType: "application/json; charset=utf-8",
+				dataType: "json"
+			});
+			$(document).ready(function(){
+				$('#input').click(function() {
+					var send = $("#form").formToJSON();
+					$.ajax({
+						url: "http://52.233.158.172/change/api/en/account/register",
+						type: "POST",
+						data: send,
+						error: function(xhr, error) {
+							alert('Error!  Status = ' + xhr.status + ' Message = ' + error);
+						}
+					});
+					return false; 
+				});
+			});
+			}
+	</script>
+</body>
+</html>
